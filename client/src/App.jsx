@@ -15,7 +15,7 @@ function App() {
      <Router>
       <Routes>
         <Route path='/' element={<Landing />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='/user/login' element={<Login />} />
         <Route path='/Register' element={<Register />} />
         <Route path='/Dashboard/:role' element={<Dashboard />} />
         <Route path='/PostLoan' element={<PostLoan />} />

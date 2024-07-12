@@ -1,8 +1,6 @@
 import  { useState } from 'react';
 import { Form, Input, Button, Select, Row, Col, Card,Typography,message } from 'antd';
 import { Link,Navigate } from 'react-router-dom';
-
-
 const { Option } = Select;
 const {Title} =Typography;
 const Login = () => {
