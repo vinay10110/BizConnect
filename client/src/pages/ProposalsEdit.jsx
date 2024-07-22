@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import { Modal, Form, Input, Row, Col, Typography } from 'antd';
+import '../App.css'
 const { Title } = Typography;
 const ProposalsEdit = ({ visible, onClose, onSubmit, initialData }) => {
   const [form] = Form.useForm();
@@ -40,7 +41,7 @@ const ProposalsEdit = ({ visible, onClose, onSubmit, initialData }) => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Edit Proposal Details</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Edit Proposal Details</Title>
 
             <Form.Item
               label="Investment Type"

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
 import { useState } from 'react';
+import '../App.css'
 const { TextArea } = Input;
 const { Title } = Typography;
 const PostIdea = () => {
@@ -54,9 +55,10 @@ const PostIdea = () => {
               onFinish={onFinish}
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
-              style={{ maxWidth: '400px', margin: 'auto' }}
+              style={{ maxWidth: '550px', margin: 'auto' }}
+
             >
-              <Title level={1} style={{ textAlign: 'center' }}>Post Idea</Title>
+              <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Post Idea</Title>
 
               <Form.Item
                 label="Title"
@@ -75,11 +77,11 @@ const PostIdea = () => {
               </Form.Item>
 
               <Form.Item
-                label="Company Register No."
+                label="Company Register No"
                 name="reg"
                 rules={[{ required: true, message: 'Please enter the company register number' }]}
               >
-                <Input type="number" placeholder="Enter company register no." value={companyReg} onChange={ev => setReg(ev.target.value)} />
+                <Input type="number" placeholder="Enter company register no" value={companyReg} onChange={ev => setReg(ev.target.value)} />
               </Form.Item>
 
               <Form.Item

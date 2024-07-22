@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import  {  useEffect } from 'react';
+import '../App.css'
 import {  Modal, Form, Input, Row, Col, Typography } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -42,7 +43,7 @@ const IdeasEdit = ({ visible, onClose, onSubmit, initialData }) => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Edit Idea</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Edit Idea</Title>
 
             <Form.Item
               label="Title"

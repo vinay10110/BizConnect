@@ -6,10 +6,12 @@
   font-weight: 500;
   font-style: normal;
 }
-@media (max-width: 768px) {
+@media (max-width : 768px) {
   *{
     font-size: 10px; 
   }
   
 }
-
+.fontText{
+  font-size: 5px;
+}

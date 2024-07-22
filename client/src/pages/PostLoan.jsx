@@ -1,5 +1,6 @@
 import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
 import { useState } from 'react';
+import '../App.css'
 const { Title } = Typography;
 
 const PostLoan = () => {
@@ -57,7 +58,7 @@ const PostLoan = () => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Enter Loan Details</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Enter Loan Details</Title>
             <Form.Item
               label="Loan Type"
               name="loanType"

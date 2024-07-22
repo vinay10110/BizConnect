@@ -1,6 +1,6 @@
 import { Input, Row, Col, Form, Typography, Button, message, Result } from 'antd';
 import { useState } from 'react';
-
+import '../App.css'
 const { Title } = Typography;
 const { TextArea } = Input;
 
@@ -50,7 +50,7 @@ const AskQuery = () => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Ask Query</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Ask Query</Title>
 
             <Form.Item
               label="Category"

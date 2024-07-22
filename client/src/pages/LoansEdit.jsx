@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
+import '../App.css'
 import { Modal, Form, Input, Row, Col, Typography } from 'antd';
 const { Title } = Typography;
 const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
@@ -40,7 +41,7 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Edit Loan Details</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Edit Loan Details</Title>
 
             <Form.Item
               label="Loan Type"

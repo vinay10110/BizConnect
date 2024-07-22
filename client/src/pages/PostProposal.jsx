@@ -1,5 +1,6 @@
 import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
 import { useState } from 'react';
+import '../App.css'
 const { Title } = Typography;
 const PostProposal = () => {
   const [investmentType, setInvestmentType] = useState('');
@@ -53,7 +54,7 @@ const PostProposal = () => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: '400px', margin: 'auto' }}
           >
-            <Title level={1} style={{ textAlign: 'center' }}>Post Proposal</Title>
+            <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Post Proposal</Title>
             <Form.Item
               label="Investment Type"
               name="investmentType"
