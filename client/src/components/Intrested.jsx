@@ -1,26 +1,28 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState,useContext } from "react";
 import { Card, Row, Col, Spin,Divider, Button } from 'antd';
 import FormatTime from './FormatTime';
 import { UserContext } from "./UserContext";
 const Intrested = () => {
   const [filterData, setFilterData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {userInfo}=useContext(UserContext);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/intrest`);
-        const data = await response.json();
-        const filter = data.filter((intrest) => intrest.loan.user === userInfo.id);
-        setFilterData(filter);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
   
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/intrest`);
+      const data = await response.json();
+      const filter = data.filter((intrest) => intrest.loan.user === userInfo.id);
+      setFilterData(filter);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
     fetchData();
   }, [userInfo]);
 

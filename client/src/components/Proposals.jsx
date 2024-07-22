@@ -11,15 +11,15 @@ const Proposals = () => {
   const [proposals, setProposals] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [userTrue, setUserTrue] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editingProposal, setEditingProposal] = useState(null);
   const {userInfo}=useContext(UserContext);
   const [visible, setVisible] = useState(false);
   const [itemType, setItemType] = useState(null);
   const [item, setItem] = useState(null);
   const fetchDataAndFilter = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/proposal`);
       const result = await response.json();
       setLoading(false);
@@ -34,8 +34,9 @@ const Proposals = () => {
       }
     } catch (error) {
       console.error('Error fetching proposals:', error);
-      setLoading(false);
+     
     }
+    setLoading(false);
   };
   useEffect(() => {
   

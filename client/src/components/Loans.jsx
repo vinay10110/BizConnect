@@ -12,7 +12,7 @@ const Loans = () => {
   const [loans, setLoans] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [userTrue, setUserTrue] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editingLoan, setEditingLoan] = useState(null);
   const [userInterests, setUserInterests] = useState([]);
   const [visible, setVisible] = useState(false);

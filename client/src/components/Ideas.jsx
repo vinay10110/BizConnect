@@ -16,7 +16,7 @@ const Ideas = () => {
   const token = localStorage.getItem('token');
   const [ideas, setIdeas] = useState([]);
   const [userTrue, setUserTrue] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editingIdea, setEditingIdea] = useState(null);
   const [visible, setVisible] = useState(false);
   const [itemType, setItemType] = useState(null);
@@ -27,6 +27,7 @@ const Ideas = () => {
     window.open(mailto, '_blank');
   };
   const fetchIdeas = async () => {
+    setLoading(true);
     const ideasResponse = await fetch(`${import.meta.env.VITE_API_URL}/idea`);
     const ideasResult = await ideasResponse.json();
     if (userInfo.type === 'BusinessMan') {
@@ -79,11 +80,12 @@ const Ideas = () => {
     });
     if (response.ok) {
       message.success('Updated successfully');
+      fetchIdeas();
     } else {
       message.error('Failed to update idea');
     }
     
-    fetchIdeas();
+    
   };
 
   const cancel = () => {
