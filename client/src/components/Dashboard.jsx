@@ -193,11 +193,7 @@ const Dashboard = () => {
                 type="text"
                 icon={hidden ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setHidden(!hidden)}
-                style={{
-                  fontSize: '16px',
-                  width: 64,
-                  height: 64,
-                }}
+              
               />
               }
             <Space direction="vertical" size={16}>
