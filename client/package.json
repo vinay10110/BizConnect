@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ctrl/tinycolor": "^4.1.0",
+    "@preact/signals-react": "^2.1.0",
     "antd": "^5.19.0",
     "dotenv": "^16.4.5",
     "lottie-react": "^2.4.0",

@@ -7,12 +7,32 @@ router.post('/',(req,res)=>{
     const token=req.headers.authorization;
   const id=req.body;
   jwt.verify(token,secret,{},async(err,info)=>{
+    if(err){
+      console.log(err);
+    }
     try {
       await Intrest.create({
        user:info.id,
        loan:id.ID,
       })
       return res.status(201).json({message:'intrest posted succesfully'})
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({message:'Internal server error'})
+    }
+  })
+   })
+   router.delete('/',(req,res)=>{
+    const token=req.headers.authorization;
+  const id=req.body;
+ 
+  jwt.verify(token,secret,{},async(err,info)=>{
+    if(err){
+      console.log(err);
+    }
+    try {
+      await Intrest.findByIdAndDelete(id.id)
+      return res.status(201).json({message:'intrest canceld succesfully'})
     } catch (error) {
       console.log(error);
       return res.status(500).json({message:'Internal server error'})

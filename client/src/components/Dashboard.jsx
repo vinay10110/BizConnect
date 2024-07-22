@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
-import { Layout, theme, Space, Avatar, message } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { useEffect, useState,useContext } from 'react';
+import { Layout, theme, Space, Avatar,Button } from 'antd';
+import { UserOutlined,MenuFoldOutlined,MenuUnfoldOutlined, } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import Ideas from './Ideas';
 import Logout from './Logout';
@@ -16,7 +16,7 @@ import Intrested from './Intrested';
 import Solutions from './Solutions';
 import Proposals from './Proposals';
 import Sidebar from './Sidebar';
-
+import { UserContext } from './UserContext';
 const { Header, Content } = Layout;
 
 const Dashboard = () => {
@@ -31,18 +31,17 @@ const Dashboard = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showPostProposals, setShowPostProposals] = useState(false);
   const [showYourProposals, setShowYourProposals] = useState(false);
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [imageBase64, setImageBase64] = useState('');
   const { role } = useParams();
   const [collapsed, setCollapsed] = useState(false);
+  const [collapsible,setCollapsible]=useState(true);
   const token = localStorage.getItem('token');
-  const [id, setId] = useState('');
-
+  const {setUserInfo,userInfo}=useContext(UserContext);
+  const [isMobile,setIsMobile]=useState(false);
+  const [hidden,setHidden]=useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
+  
   const handleMenuItemClick = ({ key }) => {
     setShowIdeas(false);
     setShowLoans(false);
@@ -133,31 +132,27 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-        const data = await response.json();
-        if (data.length > 0) {
-          const { email, imageData, name, _id } = data[0];
-
-          setName(name);
-          setEmail(email);
-          setImageBase64(imageData);
-          setId(_id);
-        }
-      } catch (error) {
-        message.error('Failed to fetch profile data');
+    fetch(`${import.meta.env.VITE_API_URL}/user/profile`,{
+      headers:{
+        'content-type':'application/json',
+        'Authorization':`${token}`
+      }
+    })
+    .then(res=>res.json())
+    .then(data=>setUserInfo(data[0]));
+   
+    const handleResize = () => {
+      const isMobileView = window.innerWidth < 768;
+      setIsMobile(isMobileView);
+      if (isMobileView) {
+        setCollapsible(false);
+        setCollapsed(true);
+      } else {
+        setCollapsible(true);
       }
     };
-    fetchProfile();
-
-    // Set the initial content based on the role
+    handleResize();
+    window.addEventListener('resize', handleResize);
     switch (role) {
       case 'User':
         setShowIdeas(true);
@@ -177,44 +172,58 @@ const Dashboard = () => {
       default:
         break;
     }
-  }, [role]);
-
+    return () => window.removeEventListener('resize', handleResize);
+  }, [token,role,setUserInfo]);
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh' }} hasSider>
       <Sidebar
         role={role}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
         handleMenuItemClick={handleMenuItemClick}
+        hidden={hidden}
+        collapsible={collapsible}
       />
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer, margin: '5px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ marginLeft: '10px' }}>
-              <Space direction="vertical" size={16}>
-                <Space wrap size={16}>
-                  <Avatar size="large" icon={<UserOutlined />} src={imageBase64} />
-                  <p className="mailandtype">{email}/{role}</p>
-                </Space>
-              </Space>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between',height:'60px' }}>
+            <div style={{ marginLeft: '5px'}}>
+              {
+                isMobile && <Button
+                type="text"
+                icon={hidden ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setHidden(!hidden)}
+                style={{
+                  fontSize: '16px',
+                  width: 64,
+                  height: 64,
+                }}
+              />
+              }
+            <Space direction="vertical" size={16}>
+    <Space wrap size={16}>
+      <Avatar size="large" icon={<UserOutlined />} src={userInfo.imageData}/>
+     <span>{userInfo.name}/{userInfo.type}</span> 
+      </Space>
+    </Space>
             </div>
             <div style={{ marginRight: '10px' }}>
               <Logout />
             </div>
           </div>
         </Header>
-        <Content style={{ margin: '0 16px' }}>
-          {showIdeas && <Ideas role={role} email={email} />}
+        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+          {showIdeas && <Ideas  />}
           {showPostLoanOffer && <PostLoan />}
-          {showPostIdea && <PostIdea role={role} />}
-          {showLoans && <Loans role={role} email={email} />}
+          {showPostIdea && <PostIdea  />}
+          {showLoans && <Loans   />}
           {showAskQuery && <AskQuery />}
-          {showProfile && <Profile userName={name} image={imageBase64} />}
+          {showProfile && <Profile   />}
           {showViewQueries && <Query />}
-          {showIntrested && <Intrested id={id} />}
-          {showYourSolutions && <Solutions role={role} id={id} />}
+          {showIntrested && <Intrested />}
+          {showYourSolutions && <Solutions  />}
           {showPostProposals && <PostProposal />}
-          {showYourProposals && <Proposals role={role} email={email} />}
+          {showYourProposals && <Proposals   />}
         </Content>
       </Layout>
     </Layout>

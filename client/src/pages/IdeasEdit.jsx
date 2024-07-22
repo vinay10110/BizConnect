@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import  { useState, useEffect } from 'react';
+import  {  useEffect } from 'react';
 import {  Modal, Form, Input, Row, Col, Typography } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;

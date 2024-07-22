@@ -8,6 +8,9 @@ router.post('/',(req,res)=>{
     const token=req.headers.authorization;
     const {category,description}=req.body;
     jwt.verify(token,secret,{},async(err,info)=>{
+      if(err){
+        console.log(err);
+      }
       try {
         await Query.create({
               user:info.id,

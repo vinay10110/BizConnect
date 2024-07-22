@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Upload, Row, Col, Form, Input, Avatar, Space, message } from 'antd';
-
-const Profile = ({ userName, image }) => {
-  console.log(userName);
+import { Button, Upload, Row, Col, Form, Input, Avatar, message, Flex } from 'antd';
+import { UserContext } from './UserContext';
+import '../App.css'
+const Profile = () => {
+  const {setUserInfo,userInfo}=useContext(UserContext);
   const [imageBase64, setImageBase64] = useState(null);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(userInfo.name);
   const [password, setPassword] = useState('');
   const [editImage, setEditImage] = useState(false);
   const [editNamePassword, setEditNamePassword] = useState(false);
@@ -29,7 +28,6 @@ const Profile = ({ userName, image }) => {
   const handleImage = async () => {
     try {
       setUploading(true); 
-      console.log(imageBase64);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile/image`, {
         method: 'PUT',
         body:JSON.stringify({imageData:imageBase64}) ,
@@ -38,9 +36,11 @@ const Profile = ({ userName, image }) => {
           'Authorization': `${token}`,
         },
       });
+      const data=await response.json();
       if (response.ok) {
         message.success('Image updated successfully');
         setEditImage(false);
+        setUserInfo(data);
       } else {
         message.error('Failed to update the image');
       }
@@ -65,9 +65,12 @@ const Profile = ({ userName, image }) => {
             authorization: `${token}`,
           },
         });
+        const data=await response.json();
+      
         if (response.ok) {
           message.success('Updated successfully');
           setEditNamePassword(false);
+          setUserInfo(data.userDoc);
         } else {
           message.error('Failed to update');
         }
@@ -84,114 +87,119 @@ const Profile = ({ userName, image }) => {
         <Form
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
-          style={{ maxWidth: '400px', margin: 'auto' }}
+          style={{ maxWidth: '400px', margin: 'auto',alignItems:'center'}}
         >
-          <Form.Item>
-            <Space wrap size={16}>
+          <Form.Item style={{alignItems:'center',display:'flex',justifyContent:'center'}}>
+          
               <Avatar
-                size={100}
+                size={110}
                 icon={<UserOutlined />}
-                src={imageBase64?imageBase64:image}
-                style={{ marginLeft: '100px' }}
+                src={imageBase64?imageBase64:userInfo.imageData}
+               
               />
-            </Space>
+           
           </Form.Item>
           {!editImage && (
-            <Form.Item>
-              <Row justify="center">
+            <Form.Item style={{alignItems:'center',display:'flex',justifyContent:'center'}}>
+             
                 
                 <Button
                   type="primary"
                   onClick={() => setEditImage(true)}
-                  style={{ marginLeft: '16px' }}
+                  
                 >
                   Edit Image
                 </Button>
-              </Row>
+              
             </Form.Item>
           )}
           {editImage && (
-            <Form.Item>
-              <Row justify="center">
+            <>
+            <Form.Item style={{alignItems:'center',display:'flex',justifyContent:'center'}}>
+               
                 <Upload onChange={handleChange} showUploadList={true}>
                   <Button icon={<UploadOutlined />}>Click to Re-upload</Button>
                 </Upload>
+                
+            </Form.Item>
+            <Flex justify='center' gap="middle" style={{marginBottom:'25px'}}>
                 <Button
                   type="primary"
                   htmlType="button"
                   onClick={handleImage}
                   loading={uploading}
-                  style={{ marginLeft: '16px' }}
+                  
                 >
                   Save
                 </Button>
                 <Button onClick={() => {
                   setImageBase64(null)
                   setEditImage(false)
-
                 }
-                } style={{ marginLeft: '16px' }}>
+                } >
                   Cancel
                 </Button>
-              </Row>
-            </Form.Item>
+                </Flex>
+            </>
           )}
-         
-            <Form.Item>
-              <Row justify="center">
+          <Flex justify='center'vertical gap="middle" >
+           
+           
                 <Input
-                defaultValue={userName}
-                 placeholder={userName}
+                 placeholder={userInfo.name}
                   value={name}
+                  className='inputProfile'
                   disabled={!editNamePassword}
                   onChange={(ev)=>setName(ev.target.value)}
-                  style={{ cursor: 'default', width: '300px', marginBottom: '16px' }}
+                  style={{ cursor: 'default' }}
                 />
-              </Row>
-              <Row justify="center">
-                <Input
-                  type="password"
+           
+          
+                <Input.Password
+                
                   placeholder="Password"
+                  className='inputProfile'
                   value={password}
+                  size='large'
                   disabled={!editNamePassword}
                   onChange={(ev)=>setPassword(ev.target.value)}
-                  style={{ cursor: 'default', width: '300px' }}
+                  style={{ cursor: 'default' }}
                 />
-              </Row>
+                
+           
+            </Flex>
               {
                 !editNamePassword?(
-               <Row justify="center">
+                  <Form.Item style={{alignItems:'center',display:'flex',justifyContent:'center',marginTop:'25px'}}>
+             
                 <Button
                   type="primary"
                   onClick={() => setEditNamePassword(true)}
-                  style={{ marginTop: '16px' }}
                 >
                   Edit Name & Password
                 </Button>
-              </Row>
-                ):(<Row justify="center">
+            </Form.Item>
+                ):(
+                 <Flex justify='center' style={{marginTop:'25px'}}>
+                
                   <Button
                     type="primary"
                    onClick={handleSubmit}
-                    style={{ marginTop: '16px',marginRight:'6px' }}
+                    style={{ marginRight: '16px' }}
                   >
                     Save
                   </Button>
                   <Button
-                    type="primary"
                       onClick={()=>{
                         setEditNamePassword(false);
                       }}
-                    style={{ marginTop: '16px' }}
+                  
                   >
                     Cancel
                   </Button>
-                </Row>)
+               </Flex>
+                )
               }
-              
-            </Form.Item>
-                               
-         
         </Form>
       </Col>
     </Row>

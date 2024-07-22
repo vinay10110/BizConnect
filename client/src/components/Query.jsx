@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useContext, useEffect, useState } from "react";
 import { Card, Button, Popover, Form, Input, message,Row,Col } from 'antd';
 import FormatTime from './FormatTime';
+import {UserContext} from './UserContext'
 const { TextArea } = Input;
 
 const Query = () => {
@@ -8,8 +10,26 @@ const Query = () => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [currentQueryId, setCurrentQueryId] = useState(null);
+  const [userTrue,setUserTrue]=useState(false)
   const token = localStorage.getItem('token');
-
+  const {userInfo}=useContext(UserContext);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/query`);
+      const result = await response.json();
+     
+      if(userInfo.type!='BusinessAdvisor'){
+        setUserTrue(true)
+        const filter=result.filter(query=>query.user._id===userInfo.id);
+        setQueries(filter)
+      }
+      else{
+        setQueries(result);
+      }
+      
+    };
+    fetchData();
+  }, [userInfo]);
   const hide = () => {
     setOpen(false);
   };
@@ -38,15 +58,7 @@ const Query = () => {
     setCurrentQueryId(queryId);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/query`);
-      const result = await response.json();
-      setQueries(result);
-    };
-
-    fetchData();
-  }, [queries]);
+ 
 
   const formContent = () => (
     <Form
@@ -103,6 +115,27 @@ const Query = () => {
         </Card>
       </Col>
     ))}
+    {userTrue && (
+  queries.map((query) => (
+    <Col span={8} key={query._id}>
+      <Card
+        title={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>{query.category}</span>
+            <span style={{ fontSize: '0.8em', color: 'gray' }}>
+              {FormatTime(query.createdAt)}
+            </span>
+          </div>
+        }
+        bordered={false}
+        style={{ marginBottom: 16 }}
+      >
+        <p>Description: {query.description}</p>
+      </Card>
+    </Col>
+  ))
+)}
+
   </Row>
   );
 };

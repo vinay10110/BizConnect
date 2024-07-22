@@ -1,40 +1,59 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { Card, Row, Col, Avatar, Button, Divider, Typography, Spin, Popconfirm, message } from 'antd';
 import FormatTime from "./FormatTime";
 import ProposalsEdit from "../pages/ProposalsEdit"; 
+import { UserContext } from "./UserContext";
+import DetailsDrawer from "./DetailsDrawer";
 const { Text } = Typography;
 
-const Proposals = ({ role, email }) => {
+const Proposals = () => {
   const [proposals, setProposals] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [userTrue, setUserTrue] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editingProposal, setEditingProposal] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {userInfo}=useContext(UserContext);
+  const [visible, setVisible] = useState(false);
+  const [itemType, setItemType] = useState(null);
+  const [item, setItem] = useState(null);
+  const fetchDataAndFilter = async () => {
+    try {
       setLoading(true);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/proposal`);
       const result = await response.json();
-      setProposals(result);
       setLoading(false);
-    };
 
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (role === 'Investor') {
-      const filter = proposals.filter((proposal) => proposal.user.email === email);
-      setUserTrue(true);
-      setFilterData(filter);
+      if (userInfo.type === 'Investor') {
+        const filter = result.filter((proposal) => proposal.user.email === userInfo.email);
+        setUserTrue(true);
+        setFilterData(filter);
+      }
+      else{
+        setProposals(result)
+      }
+    } catch (error) {
+      console.error('Error fetching proposals:', error);
+      setLoading(false);
     }
-  }, [proposals, role, email]);
+  };
+  useEffect(() => {
+  
+    fetchDataAndFilter();
+  }, [userInfo]);
 
   const dataToDisplay = userTrue ? filterData : proposals;
+  const showDrawer = (type, data) => {
+    setItemType(type);
+    setItem(data);
+    setVisible(true);
+  };
 
+  const onClose = () => {
+    setVisible(false);
+    setItemType(null);
+    setItem(null);
+  };
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${import.meta.env.VITE_API_URL}/proposal`, {
@@ -47,7 +66,7 @@ const Proposals = ({ role, email }) => {
     });
     if (response.status === 200) {
       message.success('Proposal deleted successfully');
-      fetchProposals();  
+      fetchDataAndFilter();  
     } else {
       message.error('Failed to delete the proposal');
     }
@@ -70,7 +89,7 @@ const Proposals = ({ role, email }) => {
     });
     if (response.ok) {
       message.success('Proposal updated successfully');
-      fetchProposals(); 
+      fetchDataAndFilter(); 
     } else {
       message.error('Failed to update the proposal');
     }
@@ -79,15 +98,6 @@ const Proposals = ({ role, email }) => {
   const cancel = () => {
     message.info('Deletion canceled');
   };
-
-  const fetchProposals = async () => {
-    setLoading(true);
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/proposal`);
-    const result = await response.json();
-    setProposals(result);
-    setLoading(false);
-  };
-
   if (loading) {
     return <Spin size="large" fullscreen={true} />;
   }
@@ -113,11 +123,13 @@ const Proposals = ({ role, email }) => {
                 hoverable={true}
                 style={{ width: '100%', margin: '7px', height: 'fit-content' }}
               >
+                <div onClick={()=>showDrawer('proposal',proposal)}>
                 <p>Investment Category: {proposal.investmentCategory}</p>
                 <p>Expected Revenue: {proposal.expectedRevenue}</p>
                 <p>Amount: {proposal.amount}</p>
                 <p>Skills Set: {proposal.skillSet}</p>
                 <p>Experience: {proposal.experience}</p>
+                </div>
                 {!userTrue && (
                   <>
                     <Divider orientation="left">Posted by</Divider>
@@ -129,7 +141,7 @@ const Proposals = ({ role, email }) => {
                     </div>
                   </>
                 )}
-                {role === 'Investor' && (
+                {userInfo.type === 'Investor' && (
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                     <Button type="primary" ghost style={{ marginRight: '8px' }} onClick={() => handleEdit(proposal)}>Edit</Button>
                     <Popconfirm
@@ -156,6 +168,12 @@ const Proposals = ({ role, email }) => {
           initialData={editingProposal}
         />
       )}
+      <DetailsDrawer
+        visible={visible}
+        onClose={onClose}
+        itemType={itemType}
+        item={item}
+      />
     </>
   );
 };

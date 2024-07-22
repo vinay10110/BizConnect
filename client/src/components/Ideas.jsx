@@ -1,40 +1,50 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Divider, Avatar, Button, Popconfirm, message } from 'antd';
 import FormatTime from "./FormatTime";
 import IdeasEdit from "../pages/IdeasEdit";
+import DetailsDrawer from './DetailsDrawer'; 
+import { UserContext } from "./UserContext";
 const { Text } = Typography;
-
-const Ideas = ({ role, email }) => {
+const truncateDescription = (text, maxLength) => {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.substring(0, maxLength) + '...';
+};
+const Ideas = () => {
   const token = localStorage.getItem('token');
   const [ideas, setIdeas] = useState([]);
-  const [filterData, setFilterData] = useState([]);
   const [userTrue, setUserTrue] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editingIdea, setEditingIdea] = useState(null);
-
+  const [visible, setVisible] = useState(false);
+  const [itemType, setItemType] = useState(null);
+  const [item, setItem] = useState(null);
+  const {userInfo}=useContext(UserContext);
   const handleClick = () => {
-    const mailto = `mailto:${email}`;
+    const mailto = `mailto:${userInfo.email}`;
     window.open(mailto, '_blank');
   };
-
   const fetchIdeas = async () => {
-    setLoading(true);
     const ideasResponse = await fetch(`${import.meta.env.VITE_API_URL}/idea`);
     const ideasResult = await ideasResponse.json();
-    if (role === 'BusinessMan') {
+    if (userInfo.type === 'BusinessMan') {
       setUserTrue(true);
-      const filteredIdeas = ideasResult.filter(idea => idea.user.email === email);
-      setFilterData(filteredIdeas);
+      const filteredIdeas = ideasResult.filter(idea => idea.user.email === userInfo.email);
+      setIdeas(filteredIdeas);
     }
-    setIdeas(ideasResult);
+    else{
+           setIdeas(ideasResult);
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
     fetchIdeas();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role, token]);
+  }, [userInfo, token]);
 
   const handleDelete = async (id) => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
@@ -57,22 +67,21 @@ const Ideas = ({ role, email }) => {
     setEditingIdea(idea);
   };
 
-  const handleUpdate = async(updatedIdea) => {
-const {id,values}=updatedIdea;
-   const response=await fetch(`${import.meta.env.VITE_API_URL}/idea`,{
-    method:'PUT',
-    body:JSON.stringify({id,values}),
-    headers:{
-      'content-type': 'application/json',
+  const handleUpdate = async (updatedIdea) => {
+    const { id, values } = updatedIdea;
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
+      method: 'PUT',
+      body: JSON.stringify({ id, values }),
+      headers: {
+        'content-type': 'application/json',
         'Authorization': `${token}`
+      }
+    });
+    if (response.ok) {
+      message.success('Updated successfully');
+    } else {
+      message.error('Failed to update idea');
     }
-   })
-   if(response.ok){
-    message.success('updated successfully');
-   }
-   else{
-    message.error('failed to update idea');
-   }
     
     fetchIdeas();
   };
@@ -81,7 +90,18 @@ const {id,values}=updatedIdea;
     message.info('Deletion canceled');
   };
 
-  const dataToDisplay = userTrue ? filterData : ideas;
+
+  const showDrawer = (type, data) => {
+    setItemType(type);
+    setItem(data);
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+    setItemType(null);
+    setItem(null);
+  };
 
   if (loading) {
     return <Spin size="large" fullscreen={true} />;
@@ -89,11 +109,11 @@ const {id,values}=updatedIdea;
 
   return (
     <>
-      {userTrue && filterData.length === 0 ? (
+      {userTrue && ideas.length === 0 ? (
         <Text>You did not post any ideas.</Text>
       ) : (
         <Row gutter={[16, 16]}>
-          {dataToDisplay.map((idea) => (
+          {ideas.map((idea) => (
             <Col xs={24} sm={12} md={8} key={idea._id}>
               <Card
                 title={
@@ -108,12 +128,16 @@ const {id,values}=updatedIdea;
                 hoverable={true}
                 style={{ width: '100%', margin: '7px', height: 'fit-content' }}
               >
+                <div onClick={()=>showDrawer('idea',idea)}>
+
+                
                 <p>Category: {idea.category}</p>
                 <p>Company Registration: {idea.companyReg}</p>
                 <p>Project Life: {idea.projectLife}</p>
                 <p>Experience: {idea.experience}</p>
                 <p>Skill Set: {idea.skillSet}</p>
-                <p>Description: {idea.description}</p>
+                <p>Description: {truncateDescription(idea.description, 25)}</p>
+                </div>
                 {
                   !userTrue && <>
                     <Divider orientation="left">Posted by</Divider>
@@ -128,19 +152,21 @@ const {id,values}=updatedIdea;
                   </>
                 }
                 {
-                  role==='BusinessMan'&&(<div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button type="primary" ghost style={{ marginRight: '2px' }} onClick={() => handleEdit(idea)}>Edit</Button>
-                    <Popconfirm
-                      title="Delete the task"
-                      description="Are you sure to delete this task?"
-                      onConfirm={() => handleDelete(idea._id)}
-                      onCancel={cancel}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button danger>Delete</Button>
-                    </Popconfirm>
-                  </div>)
+                  userInfo.type === 'BusinessMan' && (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button type="primary" ghost style={{ marginRight: '2px' }} onClick={() => handleEdit(idea)}>Edit</Button>
+                      <Popconfirm
+                        title="Delete the task"
+                        description="Are you sure to delete this task?"
+                        onConfirm={() => handleDelete(idea._id)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button danger>Delete</Button>
+                      </Popconfirm>
+                    </div>
+                  )
                 }
               </Card>
             </Col>
@@ -155,6 +181,12 @@ const {id,values}=updatedIdea;
           initialData={editingIdea}
         />
       )}
+      <DetailsDrawer
+        visible={visible}
+        onClose={onClose}
+        itemType={itemType}
+        item={item}
+      />
     </>
   );
 };

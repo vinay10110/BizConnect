@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { Form, Input, Button, Select, Row, Col, Card,Typography,message } from 'antd';
+import { Form, Input, Button, Select, Row, Col, Card,Typography,message,Spin } from 'antd';
 import { Link,Navigate } from 'react-router-dom';
 const { Option } = Select;
 const {Title} =Typography;
@@ -8,7 +8,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [type, setType] = useState('');
   const [redirect,setredirect]=useState(false);
+  const [loading,setLoading]=useState(false);
   const login = async () => {
+    setLoading(true);
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/user/login`, {
             method: 'POST',
@@ -31,13 +33,18 @@ const Login = () => {
         } else {
             message.error('An unexpected error occurred');
         }
+        
     } catch (err) {
         console.error(err);
         message.error('Failed to login, please try again later');
     }
+    setLoading(false);
 };
 if(redirect){
    return <Navigate to={`/Dashboard/${type}`} />;
+}
+if(loading){
+  return <Spin size='large' fullscreen={true}/>
 }
   return (
     <Row justify="center" align="middle" style={{ height: '100vh' }}>

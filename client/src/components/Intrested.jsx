@@ -1,31 +1,28 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { Card, Row, Col, Spin,Divider, Button } from 'antd';
 import FormatTime from './FormatTime';
-
-const Intrested = ({ id }) => {
-  const [intrested, setIntrested] = useState([]);
+import { UserContext } from "./UserContext";
+const Intrested = () => {
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {userInfo}=useContext(UserContext);
+  useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_API_URL}/intrest`);
         const data = await response.json();
-        setIntrested(data); 
-        const filter=intrested.filter((intrest)=>intrest.loan.user===id);
+        const filter = data.filter((intrest) => intrest.loan.user === userInfo.id);
         setFilterData(filter);
-        setLoading(false); 
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false); 
+        setLoading(false);
       }
     };
-    
-  useEffect(() => {
-    fetchData(); 
-  }, [3]);
+  
+    fetchData();
+  }, [userInfo]);
 
   if (loading) {
     return <Spin size="large" style={{ display: 'block', margin: 'auto' }} />;

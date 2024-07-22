@@ -49,7 +49,7 @@ const PostIdea = () => {
     <>
       {!result ? (
         <Row justify="center" align="top" style={{ minHeight: '50vh' }}>
-          <Col xs={24} sm={16} md={12} lg={8} xl={6}>
+          <Col xs={24} sm={16} md={12} lg={8} xl={10} > 
             <Form
               onFinish={onFinish}
               labelCol={{ span: 8 }}
@@ -87,7 +87,7 @@ const PostIdea = () => {
                 name="life"
                 rules={[{ required: true, message: 'Please enter the project lifetime' }]}
               >
-                <Input type="number" placeholder="Enter project lifetime" value={projectLife} onChange={ev => setLife(ev.target.value)} />
+                <Input type="number" placeholder="Enter project lifetime(years)" value={projectLife} onChange={ev => setLife(ev.target.value)} />
               </Form.Item>
 
               <Form.Item
@@ -95,7 +95,7 @@ const PostIdea = () => {
                 name="exp"
                 rules={[{ required: true, message: 'Please enter the experience' }]}
               >
-                <Input type="number" placeholder="Enter experience" value={experience} onChange={ev => setExp(ev.target.value)} />
+                <Input type="number" placeholder="Enter experience(years)" value={experience} onChange={ev => setExp(ev.target.value)} />
               </Form.Item>
 
               <Form.Item

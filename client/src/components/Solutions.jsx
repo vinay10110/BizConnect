@@ -1,47 +1,49 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import { Card, Row, Col, Spin } from 'antd';
-
-const Solutions = ({ role, id }) => {
-  const [solutions, setSolutions] = useState([]);
+import { useEffect, useState,useContext } from "react";
+import { Card, Row, Col, Spin,Divider } from 'antd';
+import { UserContext } from "./UserContext";
+const Solutions = () => {
   const [checked, setChecked] = useState(false);
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const {userInfo}=useContext(UserContext);
+  const [query,setQuery]=useState([]);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataAndFilter = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/solution`);
         const result = await response.json();
-
+        const queries=await fetch(`${import.meta.env.VITE_API_URL}/query`);
+        const queriesResult=await queries.json();
+        const queryFilter=queriesResult.filter((query)=>query.user._id===userInfo._id);
+        setQuery(queryFilter);
         if (Array.isArray(result)) {
-          setSolutions(result);
+          setLoading(false);
+          setChecked(true);
+          const filteredSolutions = userInfo.type === 'BusinessAdvisor'
+            ? result.filter(solution => solution.user._id === userInfo.id)
+            : result.filter(solution => solution.query.user === userInfo.id);
+  
+          setFilterData(filteredSolutions);
         } else {
-          setSolutions([result]);
+          setLoading(false);
+          setChecked(true);
+          const filteredSolution = userInfo.type === 'BusinessAdvisor'
+            ? [result].filter(solution => solution.user._id === userInfo.id)
+            : [result].filter(solution => solution.query.user === userInfo.id);
+  
+          setFilterData(filteredSolution);
         }
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (solutions.length > 0) {
-      setChecked(true);
-      if (role === 'BusinessAdvisor') {
-        const filter = solutions.filter(solution => solution.user._id === id);
-        setFilterData(filter);
-      } else {
-        const filter = solutions.filter(solution => solution.query.user === id);
-        setFilterData(filter);
-      }
-    }
-  }, [solutions]);
+  
+    fetchDataAndFilter(); 
+  }, [userInfo]);
 
   const BusinessAdvisorCard = ({ solution }) => (
     <Card
@@ -54,7 +56,20 @@ const Solutions = ({ role, id }) => {
       <p>For Query: {solution.query.description}</p>
     </Card>
   );
-
+const queryCard=()=>{
+ return query.map((query)=>(
+  <Col span={8} key={query._id}>
+    <Card
+      title={`${query.category}`}
+      bordered={false}
+      style={{ width: 400, marginBottom: 16 }}
+      key={query._id}
+    >
+      <p>Description: {query.description}</p>
+    </Card>
+    </Col>
+  ))
+}
   const UserCard = ({ solution }) => (
     <Card
       title={`Posted by: ${solution.user.name}`}
@@ -74,16 +89,29 @@ const Solutions = ({ role, id }) => {
           <Row gutter={[16, 16]}>
             {filterData.map((solution) => (
               <Col span={8} key={solution._id}>
-                {role === 'BusinessAdvisor' ? (
+                {userInfo.type === 'BusinessAdvisor' ? (
                   <BusinessAdvisorCard solution={solution} />
-                ) : (
-                  <UserCard solution={solution} />
+                ) : (<>
+                <Divider>Solutions</Divider>
+                <UserCard solution={solution} />
+                <Row gutter={[16,16]}>
+          {queryCard()}
+          </Row>
+                </>
+                  
                 )}
               </Col>
             ))}
           </Row>
         ) : (
-          <p>{role === 'BusinessAdvisor' ? 'You didn\'t post any solutions' : 'No solution yet'}</p>
+          <p>{userInfo.type === 'BusinessAdvisor' ? 'You didn\'t post any solutions' : (<>
+          <Divider>Solutions</Divider>
+          <p>No solution </p>
+          <Divider>Your queries</Divider>
+          <Row gutter={[16,16]}>
+          {queryCard()}
+          </Row>
+          </>)}</p>
         )
       ) : (
         <p>No data available</p>

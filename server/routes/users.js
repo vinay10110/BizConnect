@@ -40,7 +40,7 @@ router.post('/register',async(req,res)=>{
           }
           const id = userDoc.id;
           const name = userDoc.name;
-          const token = jwt.sign({ name, email, id }, secret, { expiresIn: '1h' });
+          const token = jwt.sign({ email, id }, secret, { expiresIn: '1h' });
           return res.status(200).json({ token });
       } catch (error) {
           console.error(error);
@@ -51,13 +51,15 @@ router.post('/register',async(req,res)=>{
       const token=req.headers.authorization;
       const {name,password}=req.body;
       jwt.verify(token,secret,{},async(err,info)=>{
-        const decodedToken=jwt.decode(token);
+        if(err){
+          console.log(err);
+        }
           try {
-          await User.findByIdAndUpdate(decodedToken.id,{
+       const userDoc=   await User.findByIdAndUpdate(info.id,{
               name,
               password:bcrypt.hashSync(password,salt),
-            });
-           return  res.status(206).json({message:'profile details updated succesfully'});
+            },{new:true})
+           return  res.status(206).json({userDoc});
           } catch (error) {
             console.log(error);
            return  res.status(500).json({message:'Internal server error'})
@@ -68,12 +70,11 @@ router.post('/register',async(req,res)=>{
       const token=req.headers.authorization;
       const {imageData}=req.body;
       jwt.verify(token,secret,{},async(err,info)=>{
-       const decodedToken=jwt.decode(token);
        try{
-         await User.findByIdAndUpdate(decodedToken.id,{
+         const userDoc=await User.findByIdAndUpdate(info.id,{
           imageData:imageData
-         })
-         return res.status(206).json({message:'image updated succesfully'});
+         },{new:true})
+         return res.status(206).json(userDoc);
         } catch (error) {
           console.log(error);
           return res.status(500).json({message:'Internal server error'})

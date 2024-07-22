@@ -6,12 +6,13 @@ import Dashboard from './components/Dashboard';
 import PostLoan from './pages/PostLoan';
 import PostIdea from './pages/PostIdea';
 import Landing from './pages/Landing';
+import { UserContextProvider } from './components/UserContext';
 function App() {
   
 
   return (
     <>
-  
+  <UserContextProvider>
      <Router>
       <Routes>
         <Route path='/' element={<Landing />} />
@@ -20,10 +21,9 @@ function App() {
         <Route path='/Dashboard/:role' element={<Dashboard />} />
         <Route path='/PostLoan' element={<PostLoan />} />
         <Route path='/PostIdea' element={<PostIdea />} />
-       
-       
       </Routes>
     </Router>
+    </UserContextProvider>
     </>
    
   )
