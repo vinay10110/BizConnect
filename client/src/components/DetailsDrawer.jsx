@@ -5,7 +5,7 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
   if (!item) {
     return null;
   }
-
+ 
   const renderContent = () => {
     if (itemType === 'idea') {
       return (
@@ -41,11 +41,28 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
         </>
       );
     }
+    if (itemType === 'solution') {
+      console.log(item)
+      return (
+        <>
+          <p>Query: {item.query.description}</p>
+          <p>Solution {item.description}</p>
+        </>
+      );
+    }
+    if(itemType==='query'){
+      return (
+        <>
+        <p>Category: {item.category}</p>
+        <p>Description: {item.description}</p>
+        </>
+      )
+    }
   };
 
   return (
     <Drawer
-      title={itemType === 'idea' ? item.title : itemType === 'loan' ? item.loanType : item.investmentType}
+      title={itemType === 'idea' ? item.title : itemType === 'loan' ? item.loanType : itemType === 'proposal'? item.investmentType: 'solution'}
       width={640}
       placement="right"
       onClose={onClose}

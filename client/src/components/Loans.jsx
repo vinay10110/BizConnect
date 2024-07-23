@@ -129,12 +129,11 @@ const handleIntrestDelete=async(id)=>{
   };
   const dataToDisplay = userTrue ? filterData : loans;
 
-  if (loading) {
-    return <Spin size="large" fullscreen={true} />;
-  }
+  
 
   return (
     <>
+    <Spin spinning={loading}>
       {userTrue && filterData.length === 0 ? (
         <Text>You did not apply for any loans.</Text>
       ) : (
@@ -225,6 +224,7 @@ const handleIntrestDelete=async(id)=>{
         itemType={itemType}
         item={item}
       />
+      </Spin>
     </>
   );
 };

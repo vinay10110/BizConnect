@@ -99,12 +99,11 @@ const Proposals = () => {
   const cancel = () => {
     message.info('Deletion canceled');
   };
-  if (loading) {
-    return <Spin size="large" fullscreen={true} />;
-  }
+  
 
   return (
     <>
+    <Spin spinning={loading}>
       {userTrue && filterData.length === 0 ? (
         <Text>You did not post any proposals.</Text>
       ) : (
@@ -175,6 +174,7 @@ const Proposals = () => {
         itemType={itemType}
         item={item}
       />
+      </Spin>
     </>
   );
 };

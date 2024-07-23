@@ -1,121 +1,209 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState,useContext } from "react";
-import { Card, Row, Col, Spin,Divider } from 'antd';
+import { useEffect, useState, useContext } from "react";
+import { Card, Row, Col, Spin, Divider, Flex, Button,Popconfirm, message, Modal,Input } from 'antd';
 import { UserContext } from "./UserContext";
+import DetailsDrawer from './DetailsDrawer';
+const {TextArea}=Input();
 const Solutions = () => {
-  const [checked, setChecked] = useState(false);
+  const token=localStorage.getItem('token');
   const [filterData, setFilterData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const {userInfo}=useContext(UserContext);
-  const [query,setQuery]=useState([]);
-  useEffect(() => {
-    const fetchDataAndFilter = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/solution`);
-        const result = await response.json();
-        const queries=await fetch(`${import.meta.env.VITE_API_URL}/query`);
-        const queriesResult=await queries.json();
-        const queryFilter=queriesResult.filter((query)=>query.user._id===userInfo._id);
-        setQuery(queryFilter);
-        if (Array.isArray(result)) {
-          setLoading(false);
-          setChecked(true);
-          const filteredSolutions = userInfo.type === 'BusinessAdvisor'
-            ? result.filter(solution => solution.user._id === userInfo.id)
-            : result.filter(solution => solution.query.user === userInfo.id);
-  
-          setFilterData(filteredSolutions);
-        } else {
-          setLoading(false);
-          setChecked(true);
-          const filteredSolution = userInfo.type === 'BusinessAdvisor'
-            ? [result].filter(solution => solution.user._id === userInfo.id)
-            : [result].filter(solution => solution.query.user === userInfo.id);
-  
-          setFilterData(filteredSolution);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
+  const [loading, setLoading] = useState(false);
+  const { userInfo } = useContext(UserContext);
+  const [query, setQuery] = useState([]);
+  const [description,setDescription]=useState('');
+  const [visible, setVisible] = useState(false);
+  const [itemType, setItemType] = useState(null);
+  const [item, setItem] = useState(null);
+  const truncateDescription = (text, maxLength) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.substring(0, maxLength) + '...';
+  };
+  const fetchDataAndFilter = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/solution`);
+      const result = await response.json();
+      const queries = await fetch(`${import.meta.env.VITE_API_URL}/query`);
+      const queriesResult = await queries.json();
+      const queryFilter = queriesResult.filter((query) => query.user._id === userInfo._id);
+      setQuery(queryFilter);
+
+      if (userInfo.type === 'BusinessAdvisor') {
+        const filteredSolutions = result.filter(solution => solution.user._id === userInfo._id);
+        setFilterData(filteredSolutions);
+      } else {
+        const filteredSolutions = result.filter(solution => solution.query.user === userInfo._id);
+        setFilterData(filteredSolutions);
       }
-    };
-  
-    fetchDataAndFilter(); 
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchDataAndFilter();
   }, [userInfo]);
-
-  const BusinessAdvisorCard = ({ solution }) => (
-    <Card
-      title={`Query: ${solution.query.category}`}
-      bordered={false}
-      style={{ width: 400, marginBottom: 16 }}
-      key={solution._id}
-    >
-      <p>Your Solution: {solution.description}</p>
-      <p>For Query: {solution.query.description}</p>
-    </Card>
-  );
-const queryCard=()=>{
- return query.map((query)=>(
-  <Col span={8} key={query._id}>
-    <Card
-      title={`${query.category}`}
-      bordered={false}
-      style={{ width: 400, marginBottom: 16 }}
-      key={query._id}
-    >
-      <p>Description: {query.description}</p>
-    </Card>
-    </Col>
-  ))
+  const showDrawer = (type, data) => {
+    setItemType(type);
+    setItem(data);
+    setVisible(true);
+  };
+const handleDelete=async(id)=>{
+  const response=await fetch(`${import.meta.env.VITE_API_URL}/solution`,{
+    method:'DELETE',
+    body:JSON.stringify({id}),
+    headers:{
+      'content-type':'application/json',
+      'Authorization':`${token}`
+    }
+  })
+  if(response.ok){
+    message.success('solution deleted succesfullt');
+    fetchDataAndFilter();
+  }
 }
-  const UserCard = ({ solution }) => (
-    <Card
-      title={`Posted by: ${solution.user.name}`}
-      bordered={false}
-      style={{ width: 400, marginBottom: 16 }}
-      key={solution._id}
-    >
-      <p>Your Query: {solution.query.description}</p>
-      <p>Solution: {solution.description}</p>
-    </Card>
-  );
-
+const cancel = () => {
+  message.info('Deletion canceled');
+};
+  const onClose = () => {
+    setVisible(false);
+    setItemType(null);
+    setItem(null);
+  };
+  const handleOk=async()=>{
+    const response=await fetch(`${import.meta.env.VITE_API_URL}/solution`,{
+      method:'PUT',
+      body:JSON.stringify({description}),
+      headers:{
+        'content-type':'application/json',
+        'Authorization':`${token}`
+      }
+    })
+    if(response.ok){
+      console.log(response)
+    }
+  }
+  const handleCancel=()=>{
+    onClose();
+  }
+  const handleModel=()=>{
+    return <Modal
+    title="Edit solution"
+      onOk={handleOk}
+      onCancel={handleCancel}>
+ <TextArea placeholder="Enter description"  value={description} onChange={ev => setDescription(ev.target.value)} rows={5} />
+    </Modal>
+  }
   return (
     <Spin spinning={loading}>
-      {checked ? (
-        filterData.length > 0 ? (
-          <Row gutter={[16, 16]}>
-            {filterData.map((solution) => (
-              <Col span={8} key={solution._id}>
-                {userInfo.type === 'BusinessAdvisor' ? (
-                  <BusinessAdvisorCard solution={solution} />
-                ) : (<>
-                <Divider>Solutions</Divider>
-                <UserCard solution={solution} />
-                <Row gutter={[16,16]}>
-          {queryCard()}
-          </Row>
+      {
+        userInfo.type === 'BusinessAdvisor' ? (
+          <>
+            {
+              filterData.length > 0 ? (
+                <Row gutter={[16, 16]}>
+                  {
+                    filterData.map((solution) => (
+                      <Col key={solution._id} xs={24} sm={12} md={8}>
+                        <Card
+                          title={`Query: ${solution.query.category}`}
+                          bordered={false}
+                          style={{ width: '100%', marginBottom: 16 }}
+                        >
+                          <div onClick={() => showDrawer('solution', solution)} style={{ cursor: 'pointer' }}>
+
+                            <p>Your Solution: {truncateDescription(solution.description, 25)}</p>
+                            <p>For Query: {solution.query.description}</p>
+                          </div>
+                          <Divider></Divider>
+                          <Flex justify="flex-end" gap="middle">
+                            <Button type="primary" onClick={handleModel}>Edit</Button>
+                            <Popconfirm
+                              title="Delete the solution"
+                              description="Are you sure to delete this solution?"
+                              onConfirm={() => handleDelete(solution._id)}
+                              onCancel={cancel}
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <Button danger>Delete</Button>
+                            </Popconfirm>
+                          </Flex>
+                        </Card>
+                      </Col>
+                    ))
+                  }
+                </Row>
+              ) : (
+                <>
+                  You didnt post any solutions
                 </>
-                  
-                )}
-              </Col>
-            ))}
-          </Row>
+              )
+            }
+          </>
         ) : (
-          <p>{userInfo.type === 'BusinessAdvisor' ? 'You didn\'t post any solutions' : (<>
-          <Divider>Solutions</Divider>
-          <p>No solution </p>
-          <Divider>Your queries</Divider>
-          <Row gutter={[16,16]}>
-          {queryCard()}
-          </Row>
-          </>)}</p>
+          <>
+            {
+              filterData.length > 0 ? (
+                <>
+                  <Divider>Solutions</Divider>
+                  <Row gutter={[16, 16]}>
+                    {
+                      filterData.map((solution) => (
+                        <Col key={solution._id} xs={24} sm={12} md={8}>
+                          <Card
+                            title={`Posted by: ${solution.user.name}`}
+                            bordered={false}
+                            style={{ width: 400, marginBottom: 16 }}
+                            key={solution._id}
+                          >
+                            <div onClick={() => { showDrawer('solution', solution) }} style={{ cursor: 'pointer' }}>
+                              <p>Your Query: {solution.query.description}</p>
+                              <p>Solution: {truncateDescription(solution.description, 25)}</p>
+                            </div>
+                          </Card>
+                        </Col>
+                      ))
+                    }
+                  </Row>
+                  <Divider>Queries</Divider>
+                  <Row gutter={[16, 16]}>
+                    {
+                      query.map((query) => (
+                        <Col key={query._id} xs={24} sm={12} md={8}>
+                          <Card
+                            title={`${query.category}`}
+                            bordered={false}
+                            style={{ width: 400, marginBottom: 16 }}
+                          >
+                            <div onClick={showDrawer}>
+                              <p>Description: {query.description}</p>
+                            </div>
+                          </Card>
+                        </Col>
+                      ))
+                    }
+                  </Row>
+                </>
+              ) : (
+                <>
+                  No solutions yet
+                </>
+              )
+            }
+          </>
         )
-      ) : (
-        <p>No data available</p>
-      )}
+      }
+      <DetailsDrawer
+        visible={visible}
+        onClose={onClose}
+        itemType={itemType}
+        item={item}
+      />
     </Spin>
   );
 };

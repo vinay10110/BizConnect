@@ -105,12 +105,10 @@ const Ideas = () => {
     setItem(null);
   };
 
-  if (loading) {
-    return <Spin size="large" fullscreen={true} />;
-  }
 
   return (
     <>
+    <Spin spinning={loading} >
       {userTrue && ideas.length === 0 ? (
         <Text>You did not post any ideas.</Text>
       ) : (
@@ -189,6 +187,7 @@ const Ideas = () => {
         itemType={itemType}
         item={item}
       />
+      </Spin>
     </>
   );
 };

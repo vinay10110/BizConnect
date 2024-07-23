@@ -21,6 +21,20 @@ router.post('/',(req,res)=>{
       }
     })
   })
+  router.delete('/',(req,res)=>{
+    const token=req.headers.authorization;
+    const {id}=req.body;
+   
+    jwt.verify(token,secret,{},async(err,info)=>{
+      try {
+      await Solution.findByIdAndDelete(id)
+        return res.status(201).json({message:'solution deleted succesfully'})
+      } catch (error) {
+        console.log(error);
+       return  res.status(500).json({message:'Internal server error'})
+      }
+    })
+  })
   router.get('/',async(req,res)=>{
     try {
       const solutionDoc=await Solution.find().populate('user').populate('query');

@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { Card, Button, Popover, Form, Input, message,Row,Col } from 'antd';
+import { Card, Button, Popover, Form, Input, message,Row,Col,Spin } from 'antd';
 import FormatTime from './FormatTime';
 import {UserContext} from './UserContext'
+import DetailsDrawer from "./DetailsDrawer";
 const { TextArea } = Input;
 
 const Query = () => {
@@ -10,24 +12,31 @@ const Query = () => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [currentQueryId, setCurrentQueryId] = useState(null);
+  const [loading ,setLoding]=useState(false);
   const [userTrue,setUserTrue]=useState(false)
   const token = localStorage.getItem('token');
+  const [visible, setVisible] = useState(false);
+  const [itemType, setItemType] = useState(null);
+  const [item, setItem] = useState(null);
   const {userInfo}=useContext(UserContext);
+  const fetchData = async () => {
+    setLoding(true);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/query`);
+    const result = await response.json();
+   
+    if(userInfo.type!='BusinessAdvisor'){
+      setUserTrue(true)
+      const filter=result.filter(query=>query.user._id===userInfo.id);
+      setQueries(filter)
+    }
+    else{
+      setQueries(result);
+    }
+    setLoding(false);
+    
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/query`);
-      const result = await response.json();
-     
-      if(userInfo.type!='BusinessAdvisor'){
-        setUserTrue(true)
-        const filter=result.filter(query=>query.user._id===userInfo.id);
-        setQueries(filter)
-      }
-      else{
-        setQueries(result);
-      }
-      
-    };
+    
     fetchData();
   }, [userInfo]);
   const hide = () => {
@@ -85,8 +94,20 @@ const Query = () => {
       </Form.Item>
     </Form>
   );
+  const showDrawer = (type, data) => {
+    setItemType(type);
+    setItem(data);
+    setVisible(true);
+  };
 
+  const onClose = () => {
+    setVisible(false);
+    setItemType(null);
+    setItem(null);
+  };
   return (
+    <>
+   <Spin spinning={loading}>
     <Row gutter={[16, 16]}>
     {queries.map((query) => (
       <Col span={8} key={query._id}>
@@ -102,8 +123,10 @@ const Query = () => {
           bordered={false}
           style={{ marginBottom: 16 }}
         >
+          <div onClick={()=>showDrawer('query',query)} style={{cursor:'pointer'}}>
           <p>Name: {query.user.name}</p>
           <p>Description: {query.description}</p>
+          </div>
           <Popover
             content={formContent}
             trigger="click"
@@ -137,6 +160,14 @@ const Query = () => {
 )}
 
   </Row>
+  <DetailsDrawer
+        visible={visible}
+        onClose={onClose}
+        itemType={itemType}
+        item={item}
+      />
+  </Spin>
+  </>
   );
 };
 
