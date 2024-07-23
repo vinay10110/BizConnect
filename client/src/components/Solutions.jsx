@@ -4,7 +4,7 @@ import { useEffect, useState, useContext } from "react";
 import { Card, Row, Col, Spin, Divider, Flex, Button,Popconfirm, message, Modal,Input } from 'antd';
 import { UserContext } from "./UserContext";
 import DetailsDrawer from './DetailsDrawer';
-const {TextArea}=Input();
+const {TextArea}=Input;
 const Solutions = () => {
   const token=localStorage.getItem('token');
   const [filterData, setFilterData] = useState([]);
