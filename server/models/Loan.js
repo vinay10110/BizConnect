@@ -3,10 +3,12 @@ const Loan=new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,ref:'User'
             },
-    loanType:String,
+    loanType:{
+        type:[String]
+    },
     minAge:Number,
     maxAge:Number,
-    netIncome:Number,
+    amount:Number,
     intrestRate:Number,
     duration:Number
 },{

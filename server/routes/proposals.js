@@ -6,17 +6,17 @@ const proposal = require('../models/Proposal');
 const secret=process.env.SECRET;
 router.post('/',(req,res)=>{
     const token=req.headers.authorization;
-    const {investmentType,investmentCategory,expectedRevenue,amount,skillSet,experience}=req.body;
+    const {investmentType,expectedRevenue,amount,skillSet,experience,description}=req.body;
     jwt.verify(token,secret,{},async(err,info)=>{
     try {
       await Proposal.create({
         user:info.id,
         investmentType,
-        investmentCategory,
         expectedRevenue,
         amount,
         skillSet,
-        experience
+        experience,
+        description
       })
       return res.status(201).json({message:'proposal posted succesfully'});
     } catch (error) {
@@ -40,16 +40,16 @@ router.post('/',(req,res)=>{
   router.put('/',(req,res)=>{
     const token=req.headers.authorization;
     const {id,values}=req.body;
-    const {investmentType,investmentCategory,expectedRevenue,amount,skillSet,experience}=values;
+    const {investmentType,expectedRevenue,amount,skillSet,experience,description}=values;
     jwt.verify(token,secret,{},async(err,info)=>{
       try {
         await Proposal.findByIdAndUpdate(id,{
           investmentType,
-          investmentCategory,
           expectedRevenue,
           amount,
           skillSet,
-          experience
+          experience,
+          description
         })
         return res.status(202).json({message:'Proposal updated succesfully'})
       } catch (error) {

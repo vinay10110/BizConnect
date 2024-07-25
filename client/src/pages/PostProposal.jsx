@@ -1,15 +1,16 @@
-import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
+import { Form, Input, Button, Row, Col, Typography, message, Result,Cascader } from 'antd';
 import { useState } from 'react';
-import '../App.css'
+import '../App.css';
+import Proposals from '../assets/Proposals'
 const { Title } = Typography;
 const PostProposal = () => {
-  const [investmentType, setInvestmentType] = useState('');
+  const [investmentType, setInvestmentType] = useState([]);
   const [expectedRevenue, setExpectedRevenue] = useState('');
-  const [investmentCategory, setInvestmentCategory] = useState('');
   const [amount, setAmount] = useState('');
   const [skillSet, setSkillSet] = useState('');
   const [experience, setExperience] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [description,setDescription]=useState('');
   const [postSuccess, setPostSuccess] = useState(false);
   const onFinish = async () => {
     const token = localStorage.getItem('token');
@@ -17,7 +18,7 @@ const PostProposal = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/proposal`, {
         method: 'POST',
-        body: JSON.stringify({ investmentType, investmentCategory, expectedRevenue, amount, skillSet, experience }),
+        body: JSON.stringify({ investmentType, expectedRevenue, amount, skillSet, experience,description }),
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -27,9 +28,8 @@ const PostProposal = () => {
       if (response.ok) {
         message.success('Proposal posted successfully');
         setPostSuccess(true);
-        setInvestmentType('');
+        setInvestmentType([]);
         setExpectedRevenue('');
-        setInvestmentCategory('');
         setAmount('');
         setSkillSet('');
         setExperience('');
@@ -52,7 +52,7 @@ const PostProposal = () => {
             onFinish={onFinish}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
-            style={{ maxWidth: '400px', margin: 'auto' }}
+            style={{ maxWidth: '500px', margin: 'auto' }}
           >
             <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Post Proposal</Title>
             <Form.Item
@@ -60,15 +60,12 @@ const PostProposal = () => {
               name="investmentType"
               rules={[{ required: true, message: 'Please enter the investment type' }]}
             >
-              <Input placeholder="Enter investment type" value={investmentType} onChange={ev => setInvestmentType(ev.target.value)} />
-            </Form.Item>
-
-            <Form.Item
-              label="Investment Category"
-              name="investmentCategory"
-              rules={[{ required: true, message: 'Please enter the investment category' }]}
-            >
-              <Input placeholder="Enter investment category" value={investmentCategory} onChange={ev => setInvestmentCategory(ev.target.value)} />
+              <Cascader
+                  options={Proposals}
+                  onChange={(value)=>setInvestmentType(value)}
+                  placeholder="Select category"
+                  value={investmentType}
+                />
             </Form.Item>
 
             <Form.Item
@@ -100,9 +97,15 @@ const PostProposal = () => {
               name="experience"
               rules={[{ required: true, message: 'Please enter the experience' }]}
             >
-              <Input type="number" placeholder="Enter experience" value={experience} onChange={ev => setExperience(ev.target.value)} />
+              <Input type="number" min={1} max={100} placeholder="Enter experience (in years)" value={experience} onChange={ev => setExperience(ev.target.value)} />
             </Form.Item>
-
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[{ required: true, message: 'Please enter the description' }]}
+            >
+              <Input  placeholder="Enter description" value={description} onChange={ev => setDescription(ev.target.value)} />
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>
                 Submit

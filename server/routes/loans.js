@@ -5,7 +5,7 @@ const Loan=require('../models/Loan');
 const secret=process.env.SECRET;
 router.post('/',(req,res)=>{
     const token=req.headers.authorization;
-    const {loanType,minAge,maxAge,netIncome,intrestRate,duration}=req.body;
+    const {loanType,minAge,maxAge,amount,intrestRate,duration}=req.body;
    jwt.verify(token,secret,{},async(err,info)=>{
     try {
       await Loan.create({
@@ -13,7 +13,7 @@ router.post('/',(req,res)=>{
         loanType,
         minAge,
         maxAge,
-        netIncome,
+        amount,
         intrestRate,
         duration
       });
@@ -39,14 +39,14 @@ router.post('/',(req,res)=>{
   router.put('/',(req,res)=>{
     const token=req.headers.authorization;
     const {id,values}=req.body;
-    const {loanType,minAge,maxAge,netIncome,intrestRate,duration}=values;
+    const {loanType,minAge,maxAge,amount,intrestRate,duration}=values;
     jwt.verify(token,secret,{},async(err,info)=>{
       try {
         await Loan.findByIdAndUpdate(id,{
           loanType,
           minAge,
           maxAge,
-          netIncome,
+          amount,
           intrestRate,
           duration
         })

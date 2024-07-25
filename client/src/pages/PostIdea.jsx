@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
-import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
+import { Form, Input, Button, Row, Col, Typography, message, Result,Cascader } from 'antd';
 import { useState } from 'react';
-import '../App.css'
+import '../App.css';
+import Categories from '../assets/Categories'
 const { TextArea } = Input;
 const { Title } = Typography;
 const PostIdea = () => {
   const [title, setTitle] = useState('');
-  const [category, setcate] = useState('');
+  const [category, setcate] = useState([]);
   const [companyReg, setReg] = useState('');
   const [projectLife, setLife] = useState('');
   const [experience, setExp] = useState('');
@@ -28,7 +29,7 @@ const PostIdea = () => {
         message.success('Idea posted successfully');
         setResult(true); 
         setTitle(''); 
-        setcate('');
+        setcate([]);
         setReg('');
         setLife('');
         setExp('');
@@ -42,7 +43,7 @@ const PostIdea = () => {
       message.error('An error occurred. Please try again later.');
     }
   };
-
+console.log(category)
   const handleBack = () => {
     setResult(false); 
   };
@@ -73,7 +74,12 @@ const PostIdea = () => {
                 name="category"
                 rules={[{ required: true, message: 'Please enter the category' }]}
               >
-                <Input placeholder="Enter category" value={category} onChange={ev => setcate(ev.target.value)} />
+                <Cascader
+                  options={Categories}
+                  onChange={(value)=>setcate(value)}
+                  placeholder="Select category"
+                  value={category}
+                />
               </Form.Item>
 
               <Form.Item
@@ -89,7 +95,7 @@ const PostIdea = () => {
                 name="life"
                 rules={[{ required: true, message: 'Please enter the project lifetime' }]}
               >
-                <Input type="number" placeholder="Enter project lifetime(years)" value={projectLife} onChange={ev => setLife(ev.target.value)} />
+                <Input type="number" min={1} max={100} placeholder="Enter project lifetime(years)" value={projectLife} onChange={ev => setLife(ev.target.value)} />
               </Form.Item>
 
               <Form.Item
@@ -97,7 +103,7 @@ const PostIdea = () => {
                 name="exp"
                 rules={[{ required: true, message: 'Please enter the experience' }]}
               >
-                <Input type="number" placeholder="Enter experience(years)" value={experience} onChange={ev => setExp(ev.target.value)} />
+                <Input type="number" min={1} max={100} placeholder="Enter experience(years)" value={experience} onChange={ev => setExp(ev.target.value)} />
               </Form.Item>
 
               <Form.Item

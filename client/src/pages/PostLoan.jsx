@@ -1,11 +1,12 @@
-import { Form, Input, Button, Row, Col, Typography, message, Result } from 'antd';
+import { Form, Input, Button, Row, Col, Typography, message, Result,Cascader } from 'antd';
 import { useState } from 'react';
 import '../App.css'
+import Loans from '../assets/Loans';
 const { Title } = Typography;
 
 const PostLoan = () => {
-  const [loanType, setLoanType] = useState('');
-  const [netIncome, setNetIncome] = useState('');
+  const [loanType, setLoanType] = useState([]);
+  const [amount, setAmount] = useState('');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
   const [intrestRate, setIntrestRate] = useState('');
@@ -20,7 +21,7 @@ const PostLoan = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/loan`, {
         method: 'POST',
-        body: JSON.stringify({ loanType, netIncome, minAge, maxAge, intrestRate, duration }),
+        body: JSON.stringify({ loanType, amount, minAge, maxAge, intrestRate, duration }),
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -31,8 +32,8 @@ const PostLoan = () => {
       if (response.ok) {
         message.success('Loan posted successfully');
         setPostSuccess(true);
-        setLoanType('');
-        setNetIncome('');
+        setLoanType([]);
+        setAmount('');
         setMinAge('');
         setMaxAge('');
         setIntrestRate('');
@@ -64,7 +65,12 @@ const PostLoan = () => {
               name="loanType"
               rules={[{ required: true, message: 'Please enter the loan type' }]}
             >
-              <Input placeholder="Enter loan type" value={loanType} onChange={ev => setLoanType(ev.target.value)} />
+             <Cascader
+                  options={Loans}
+                  onChange={(value)=>setLoanType(value)}
+                  placeholder="Select category"
+                  value={loanType}
+                />
             </Form.Item>
 
             <Form.Item
@@ -72,7 +78,7 @@ const PostLoan = () => {
               name="minAge"
               rules={[{ required: true, message: 'Please enter the minimum age' }]}
             >
-              <Input type="number" placeholder="Enter minimum age" value={minAge} onChange={ev => setMinAge(ev.target.value)} />
+              <Input type="number"  min={18} max={100} placeholder="Enter minimum age" value={minAge} onChange={ev => setMinAge(ev.target.value)} />
             </Form.Item>
 
             <Form.Item
@@ -80,15 +86,15 @@ const PostLoan = () => {
               name="maxAge"
               rules={[{ required: true, message: 'Please enter the maximum age' }]}
             >
-              <Input type="number" placeholder="Enter maximum age" value={maxAge} onChange={ev => setMaxAge(ev.target.value)} />
+              <Input type="number" min={18} max={100} placeholder="Enter maximum age" value={maxAge} onChange={ev => setMaxAge(ev.target.value)} />
             </Form.Item>
 
             <Form.Item
-              label="Net Income"
-              name="netIncome"
-              rules={[{ required: true, message: 'Please enter the net income' }]}
+              label="Amount"
+              name="amount"
+              rules={[{ required: true, message: 'Please enter the amount' }]}
             >
-              <Input type="number" placeholder="Enter net income" value={netIncome} onChange={ev => setNetIncome(ev.target.value)} />
+              <Input type="number" placeholder="Enter amount" value={amount} onChange={ev => setAmount(ev.target.value)} />
             </Form.Item>
 
             <Form.Item
@@ -104,7 +110,7 @@ const PostLoan = () => {
               name="duration"
               rules={[{ required: true, message: 'Please enter the duration' }]}
             >
-              <Input type="number" placeholder="Enter duration" value={duration} onChange={ev => setDuration(ev.target.value)} />
+              <Input type="number" placeholder="Enter duration (in years)"  value={duration} onChange={ev => setDuration(ev.target.value)} />
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

@@ -3,12 +3,14 @@ const Proposal=new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,ref:'User'
             },
-    investmentType:String,
-    investmentCategory:String,
+    investmentType:{
+        type:[String]
+    },
     expectedRevenue:Number,
     amount:Number,
     skillSet:String,
-    experience:Number
+    experience:Number,
+    description:String
 },{
     timestamps:true
 })

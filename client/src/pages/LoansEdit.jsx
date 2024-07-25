@@ -56,7 +56,7 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
               name="minAge"
               rules={[{ required: true, message: 'Please enter the minimum age' }]}
             >
-              <Input type="number" placeholder="Enter minimum age" />
+              <Input type="number" min={18} max={100} placeholder="Enter minimum age" />
             </Form.Item>
 
             <Form.Item
@@ -64,7 +64,7 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
               name="maxAge"
               rules={[{ required: true, message: 'Please enter the maximum age' }]}
             >
-              <Input type="number" placeholder="Enter maximum age" />
+              <Input type="number"  min={18} max={100} placeholder="Enter maximum age" />
             </Form.Item>
 
             <Form.Item
@@ -88,7 +88,7 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
               name="duration"
               rules={[{ required: true, message: 'Please enter the duration' }]}
             >
-              <Input type="number" placeholder="Enter duration" />
+              <Input type="number"  placeholder="Enter duration" />
             </Form.Item>
           </Form>
         </Col>

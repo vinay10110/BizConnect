@@ -10,7 +10,7 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
     if (itemType === 'idea') {
       return (
         <>
-          <p>Category: {item.category}</p>
+          <p>Category: {item.category[item.category.length-1]}</p>
           <p>Company Registration: {item.companyReg}</p>
           <p>Project Life: {item.projectLife}</p>
           <p>Experience: {item.experience}</p>
@@ -33,16 +33,17 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
     if (itemType === 'proposal') {
       return (
         <>
-          <p>Investment Category: {item.investmentCategory}</p>
+          <p>Investment Category: {item.investmentType[item.investmentType.length-2]}</p>
           <p>Expected Revenue: {item.expectedRevenue}</p>
           <p>Amount: {item.amount}</p>
           <p>Skills Set: {item.skillSet}</p>
           <p>Experience: {item.experience}</p>
+          <p>Description: {item.description}</p>
         </>
       );
     }
     if (itemType === 'solution') {
-      console.log(item)
+
       return (
         <>
           <p>Query: {item.query.description}</p>
@@ -62,7 +63,7 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
 
   return (
     <Drawer
-      title={itemType === 'idea' ? item.title : itemType === 'loan' ? item.loanType : itemType === 'proposal'? item.investmentType: 'solution'}
+      title={itemType === 'idea' ? item.title : itemType === 'loan' ? item.loanType[item.loanType.length-1] : itemType === 'proposal'? item.investmentType[item.investmentType.length-1]: 'solution'}
       width={640}
       placement="right"
       onClose={onClose}

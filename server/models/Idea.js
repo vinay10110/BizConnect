@@ -4,7 +4,9 @@ const Idea=new mongoose.Schema({
 type:mongoose.Schema.Types.ObjectId,ref:'User'
     },
     title:String,
-    category:String,
+    category:{
+        type:[String]
+    },
     companyReg:Number,
     projectLife:Number,
     experience:Number,
