@@ -3,6 +3,7 @@ import { useState } from 'react';
 import '../App.css';
 import Proposals from '../assets/Proposals'
 const { Title } = Typography;
+const { TextArea } = Input;
 const PostProposal = () => {
   const [investmentType, setInvestmentType] = useState([]);
   const [expectedRevenue, setExpectedRevenue] = useState('');
@@ -104,7 +105,7 @@ const PostProposal = () => {
               name="description"
               rules={[{ required: true, message: 'Please enter the description' }]}
             >
-              <Input  placeholder="Enter description" value={description} onChange={ev => setDescription(ev.target.value)} />
+              <TextArea rows={5} cols={5}  placeholder="Enter description" value={description} onChange={ev => setDescription(ev.target.value)} />
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>

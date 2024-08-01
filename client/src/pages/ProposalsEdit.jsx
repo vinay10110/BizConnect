@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
-import { Modal, Form, Input, Row, Col, Typography } from 'antd';
+import { Modal, Form, Input, Row, Col, Typography,Cascader } from 'antd';
 import '../App.css'
+import Proposals from '../assets/Proposals';
 const { Title } = Typography;
 const ProposalsEdit = ({ visible, onClose, onSubmit, initialData }) => {
   const [form] = Form.useForm();
@@ -48,17 +49,13 @@ const ProposalsEdit = ({ visible, onClose, onSubmit, initialData }) => {
               name="investmentType"
               rules={[{ required: true, message: 'Please enter the investment type' }]}
             >
-              <Input placeholder="Enter investment type" />
+              <Cascader
+                  options={Proposals}
+            
+                  placeholder="Select category"
+                 
+                />
             </Form.Item>
-
-            <Form.Item
-              label="Investment Category"
-              name="investmentCategory"
-              rules={[{ required: true, message: 'Please enter the investment category' }]}
-            >
-              <Input placeholder="Enter investment category" />
-            </Form.Item>
-
             <Form.Item
               label="Expected Revenue"
               name="expectedRevenue"

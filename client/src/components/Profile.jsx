@@ -117,7 +117,7 @@ const Profile = () => {
             <>
             <Form.Item style={{alignItems:'center',display:'flex',justifyContent:'center'}}>
                
-                <Upload onChange={handleChange} showUploadList={true}>
+                <Upload onChange={handleChange} showUploadList={true} >
                   <Button icon={<UploadOutlined />}>Click to Re-upload</Button>
                 </Upload>
                 

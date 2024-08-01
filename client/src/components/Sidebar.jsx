@@ -13,7 +13,10 @@
   } from '@ant-design/icons';
 
   const { Sider } = Layout;
+  const siderStyle = {
+   
 
+  };
   function getItem(label, key, icon, children) {
     return {
       key,
@@ -66,7 +69,7 @@
   const Sidebar = ({ role, collapsed, setCollapsed, handleMenuItemClick ,hidden,collapsible}) => {
     const items = menuItemsByRole[role] || [];
     return (
-      <Sider collapsible={collapsible} collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} hidden={hidden}>
+      <Sider collapsible={collapsible} collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} hidden={hidden} style={siderStyle}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={handleMenuItemClick}>
           {items.map((item) => (

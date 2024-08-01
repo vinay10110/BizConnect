@@ -112,7 +112,7 @@ const cancel = () => {
                         <Card
                           title={`Query: ${solution.query.category}`}
                           bordered={false}
-                          style={{ width: '100%', marginBottom: 16 }}
+                          style={{ width: '100%', height: 'fit-content' }}
                         >
                           <div onClick={() => showDrawer('solution', solution)} style={{ cursor: 'pointer' }}>
 
@@ -158,7 +158,7 @@ const cancel = () => {
                           <Card
                             title={`Posted by: ${solution.user.name}`}
                             bordered={false}
-                            style={{ width: 400, marginBottom: 16 }}
+                            style={{ width: '100%', marginBottom: 16 }}
                             key={solution._id}
                           >
                             <div onClick={() => { showDrawer('solution', solution) }} style={{ cursor: 'pointer' }}>
@@ -170,24 +170,7 @@ const cancel = () => {
                       ))
                     }
                   </Row>
-                  <Divider>Queries</Divider>
-                  <Row gutter={[16, 16]}>
-                    {
-                      query.map((query) => (
-                        <Col key={query._id} xs={24} sm={12} md={8}>
-                          <Card
-                            title={`${query.category}`}
-                            bordered={false}
-                            style={{ width: 400, marginBottom: 16 }}
-                          >
-                            <div onClick={showDrawer}>
-                              <p>Description: {query.description}</p>
-                            </div>
-                          </Card>
-                        </Col>
-                      ))
-                    }
-                  </Row>
+                  
                 </>
               ) : (
                 <>
@@ -198,6 +181,24 @@ const cancel = () => {
           </>
         )
       }
+      <Divider>Queries</Divider>
+                  <Row gutter={[16, 16]}>
+                    {
+                      query.map((query) => (
+                        <Col key={query._id} xs={24} sm={12} md={8}>
+                          <Card
+                            title={`${query.category}`}
+                            bordered={false}
+                            style={{ width: '100%', marginBottom: 16 }}
+                          >
+                            <div onClick={showDrawer}>
+                              <p>Description: {query.description}</p>
+                            </div>
+                          </Card>
+                        </Col>
+                      ))
+                    }
+                  </Row>
       <DetailsDrawer
         visible={visible}
         onClose={onClose}

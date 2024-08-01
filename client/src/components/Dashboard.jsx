@@ -184,7 +184,7 @@ const Dashboard = () => {
         hidden={hidden}
         collapsible={collapsible}
       />
-      <Layout>
+      <Layout >
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <div style={{ display: 'flex', justifyContent: 'space-between',height:'60px' }}>
             <div style={{ marginLeft: '5px'}}>

@@ -43,7 +43,6 @@ const PostIdea = () => {
       message.error('An error occurred. Please try again later.');
     }
   };
-console.log(category)
   const handleBack = () => {
     setResult(false); 
   };
