@@ -215,9 +215,9 @@ const Loans = () => {
                     style={{ width: '100%', margin: '7px', height: 'fit-content' }}
                   >
                     <div onClick={() => showDrawer('loan', loan)}>
-                      <p>Min Age: {loan.minAge}</p>
-                      <p>Max Age: {loan.maxAge}</p>
-                      <p>Amount: {loan.amount}</p>
+                      <p>Min Age: {loan.minAge} years</p>
+                      <p>Max Age: {loan.maxAge} years</p>
+                      <p>Amount: {loan.amount}.Rs</p>
                       <p>Interest Rate: {loan.intrestRate}%</p>
                       <p>Duration: {loan.duration} years</p>
                     </div>

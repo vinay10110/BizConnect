@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Form, Input, Button, Select, Row, Col, Card,Typography,message} from 'antd';
 import {Navigate,Link} from 'react-router-dom'
 const { Option } = Select;
+import '../App.css'
 const {Title}=Typography;
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -37,9 +38,10 @@ const Register = () => {
   }
 
   return (
+    <div style={{width:'100%',backgroundColor:'#fafafa'}}>
     <Row justify="center" align="middle" style={{ height: '100vh' }}>
       <Col xs={24} sm={16} md={12} lg={8} xl={6}>
-        <Card>
+        <Card className='shadow-2-down'>
           <Form
             name="registerForm"
             onFinish={register}
@@ -93,6 +95,7 @@ const Register = () => {
         </Card>
       </Col>
     </Row>
+    </div>
   );
 };
 

@@ -36,12 +36,12 @@ const IdeasEdit = ({ visible, onClose, onSubmit, initialData }) => {
       onCancel={handleCancel}
     >
       <Row justify="center" align="top" style={{ minHeight: '50vh' }}>
-        <Col >
+        <Col style={{width:'100%'}}>
           <Form
             form={form}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
-            style={{ maxWidth: '400px', margin: 'auto' }}
+            style={{ MaxWidth: '400px', margin: 'auto' }}
           >
             <Title level={1} style={{ textAlign: 'center' }} className='fontText'>Edit Idea</Title>
 
@@ -62,11 +62,11 @@ const IdeasEdit = ({ visible, onClose, onSubmit, initialData }) => {
             </Form.Item>
 
             <Form.Item
-              label="Company Register No."
+              label="Company Reg No"
               name="companyReg"
               rules={[{ required: true, message: 'Please enter the company register number' }]}
             >
-              <Input type="number" placeholder="Enter company register no." />
+              <Input  placeholder="Enter company register no." />
             </Form.Item>
 
             <Form.Item

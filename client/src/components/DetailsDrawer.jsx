@@ -12,8 +12,8 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
         <>
           <p>Category: {item.category[item.category.length-1]}</p>
           <p>Company Registration: {item.companyReg}</p>
-          <p>Project Life: {item.projectLife}</p>
-          <p>Experience: {item.experience}</p>
+          <p>Project Life: {item.projectLife} years</p>
+          <p>Experience: {item.experience} years</p>
           <p>Skill Set: {item.skillSet}</p>
           <p>Description: {item.description}</p>
         </>
@@ -22,11 +22,11 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
     if (itemType === 'loan') {
       return (
         <>
-          <p>Min Age: {item.minAge}</p>
-          <p>Max Age: {item.maxAge}</p>
-          <p>Net Income: {item.netIncome}</p>
-          <p>Interest Rate: {item.intrestRate}</p>
-          <p>Duration: {item.duration}</p>
+          <p>Min Age: {item.minAge} years</p>
+          <p>Max Age: {item.maxAge} years</p>
+          <p>Net Income: {item.netIncome} .Rs</p>
+          <p>Interest Rate: {item.intrestRate}.Rs</p>
+          <p>Duration: {item.duration} years</p>
         </>
       );
     }
@@ -34,10 +34,10 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
       return (
         <>
           <p>Investment Category: {item.investmentType[item.investmentType.length-2]}</p>
-          <p>Expected Revenue: {item.expectedRevenue}</p>
-          <p>Amount: {item.amount}</p>
+          <p>Expected Revenue: {item.expectedRevenue}.Rs</p>
+          <p>Amount: {item.amount}.Rs</p>
           <p>Skills Set: {item.skillSet}</p>
-          <p>Experience: {item.experience}</p>
+          <p>Experience: {item.experience} years</p>
           <p>Description: {item.description}</p>
         </>
       );
@@ -47,7 +47,7 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
       return (
         <>
           <p>Query: {item.query.description}</p>
-          <p>Solution {item.description}</p>
+          <p>Solution :{item.description}</p>
         </>
       );
     }

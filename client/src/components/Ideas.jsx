@@ -188,8 +188,8 @@ const Ideas = () => {
                   <div onClick={() => showDrawer('idea', idea)}>
                     <p>Category: {idea.category[idea.category.length - 1]}</p>
                     <p>Company Registration: {idea.companyReg}</p>
-                    <p>Project Life: {idea.projectLife}</p>
-                    <p>Experience: {idea.experience}</p>
+                    <p>Project Life: {idea.projectLife} years</p>
+                    <p>Experience: {idea.experience} years</p>
                     <p>Skill Set: {idea.skillSet}</p>
                     <p>Description: {truncateDescription(idea.description, 25)}</p>
                   </div>

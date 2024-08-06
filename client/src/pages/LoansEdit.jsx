@@ -34,7 +34,7 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
       onCancel={handleCancel}
     >
       <Row justify="center" align="top" style={{ minHeight: '50vh' }}>
-        <Col span={12}>
+        <Col style={{width:'100%'}}>
           <Form
             form={form}
             labelCol={{ span: 8 }}
@@ -68,8 +68,8 @@ const LoansEdit = ({ visible, onClose, onSubmit, initialData }) => {
             </Form.Item>
 
             <Form.Item
-              label="Net Income"
-              name="netIncome"
+              label="Amount"
+              name="amount"
               rules={[{ required: true, message: 'Please enter the net income' }]}
             >
               <Input type="number" placeholder="Enter net income" />

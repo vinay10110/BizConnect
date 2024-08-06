@@ -4,7 +4,7 @@ const Loan=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,ref:'User'
             },
     loanType:{
-    type:mongoose.Schema.Types.ObjectId,ref:'Loan'
+    type:[String]
     },
     minAge:Number,
     maxAge:Number,

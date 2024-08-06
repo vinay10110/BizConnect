@@ -7,7 +7,7 @@ type:mongoose.Schema.Types.ObjectId,ref:'User'
     category:{
         type:[String]
     },
-    companyReg:Number,
+    companyReg:String,
     projectLife:Number,
     experience:Number,
     skillSet:String,

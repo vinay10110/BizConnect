@@ -90,6 +90,23 @@ const cancel = () => {
   const handleCancel=()=>{
     onClose();
   }
+  const handleDeleteQuery=async(id)=>{
+    const response=await fetch(`${import.meta.env.VITE_API_URL}/query`,{
+      method:'DELETE',
+      body:JSON.stringify({id}),
+      headers:{
+        'content-type':'application/json',
+        'Authorization':`${token}`
+      }
+    })
+    if(response.ok){
+      message.success('Query deleted succesfully')
+      fetchDataAndFilter();
+    }
+    else{
+      message.error('Unable to delete query')
+    }
+  }
   const handleModel=()=>{
     return <Modal
     title="Edit solution"
@@ -181,7 +198,7 @@ const cancel = () => {
           </>
         )
       }
-      <Divider>Queries</Divider>
+      { userInfo.type!=='BusinessAdvisor' && <Divider> Pending Queries</Divider>}
                   <Row gutter={[16, 16]}>
                     {
                       query.map((query) => (
@@ -194,6 +211,16 @@ const cancel = () => {
                             <div onClick={showDrawer}>
                               <p>Description: {query.description}</p>
                             </div>
+                            <Popconfirm
+                        title="Delete the task"
+                        description="Are you sure to delete this query?"
+                        onConfirm={() => handleDeleteQuery(query._id)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button danger>Delete</Button>
+                      </Popconfirm>
                           </Card>
                         </Col>
                       ))

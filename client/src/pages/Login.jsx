@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { Form, Input, Button, Select, Row, Col, Card,Typography,message,Spin } from 'antd';
 import { Link,Navigate } from 'react-router-dom';
+import '../App.css'
 const { Option } = Select;
 const {Title} =Typography;
 const Login = () => {
@@ -47,13 +48,14 @@ if(loading){
   return <Spin size='large' fullscreen={true}/>
 }
   return (
+    <div style={{width:'100%',backgroundColor:'#fafafa'}}>
     <Row justify="center" align="middle" style={{ height: '100vh' }}>
       <Col xs={24} sm={16} md={12} lg={8} xl={6}>
-        <Card style={{boxShadow:'rgba(0, 0, 0, 0.16)	0px, -1px	2px	-2px'}}>
+        <Card className='shadow-2-down' > 
           <Form
             onFinish={login}
           >
-            <Title level={1} style={{textAlign:'center'}}>Sign In</Title>
+            <Title level={1} style={{textAlign:'center'}}>Login</Title>
             <Form.Item
               label="Email"
               name="email"
@@ -93,6 +95,7 @@ if(loading){
         </Card>
       </Col>
     </Row>
+    </div>
   );
 };
 

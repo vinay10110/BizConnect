@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { Card, Button, Popover, Form, Input, message,Row,Col,Spin } from 'antd';
+import { Card, Button, Popover, Form, Input, message,Row,Col,Spin, Divider, Avatar } from 'antd';
 import FormatTime from './FormatTime';
 import {UserContext} from './UserContext'
 import DetailsDrawer from "./DetailsDrawer";
@@ -24,7 +24,7 @@ const Query = () => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/query`);
     const result = await response.json();
    
-    if(userInfo.type!='BusinessAdvisor'){
+    if(userInfo.type!=='BusinessAdvisor'){
       setUserTrue(true)
       const filter=result.filter(query=>query.user._id===userInfo.id);
       setQueries(filter)
@@ -108,9 +108,9 @@ const Query = () => {
   return (
     <>
    <Spin spinning={loading}>
-    <Row gutter={[16, 16]}>
+  <Row gutter={[16, 16]}>
     {queries.map((query) => (
-      <Col span={8} key={query._id}>
+      <Col xs={24} sm={12} md={8} key={query._id}>
         <Card
           title={
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -123,43 +123,39 @@ const Query = () => {
           bordered={false}
           style={{ marginBottom: 16 }}
         >
-          <div onClick={()=>showDrawer('query',query)} style={{cursor:'pointer'}}>
-          <p>Name: {query.user.name}</p>
-          <p>Description: {query.description}</p>
+          {console.log(query)}
+          <div onClick={() => showDrawer('query', query)} style={{ cursor: 'pointer' }}>
+            {userTrue ? (
+              <>
+              <p>Posted by: {query.user.name}</p>
+              <p>{query.description}</p>
+              </>
+            ) : (
+              <>
+                <p>Name: {query.user.name}</p>
+                <p>Description: {query.description}</p>
+              </>
+            )}
           </div>
-          <Popover
-            content={formContent}
-            trigger="click"
-            open={open && currentQueryId === query._id}
-            onOpenChange={(newOpen) => handleOpenChange(newOpen, query._id)}
-          >
-            <Button type="primary">Post solution</Button>
-          </Popover>
+          {userTrue && (<>
+          <Divider></Divider>
+          <div>
+           
+          </div>
+            <Popover
+              content={formContent}
+              trigger="click"
+              open={open && currentQueryId === query._id}
+              onOpenChange={(newOpen) => handleOpenChange(newOpen, query._id)}
+            >
+              <Button type="primary">Post solution</Button>
+            </Popover>
+         </> )}
         </Card>
       </Col>
     ))}
-    {userTrue && (
-  queries.map((query) => (
-    <Col span={8} key={query._id}>
-      <Card
-        title={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>{query.category}</span>
-            <span style={{ fontSize: '0.8em', color: 'gray' }}>
-              {FormatTime(query.createdAt)}
-            </span>
-          </div>
-        }
-        bordered={false}
-        style={{ marginBottom: 16 }}
-      >
-        <p>Description: {query.description}</p>
-      </Card>
-    </Col>
-  ))
-)}
-
   </Row>
+
   <DetailsDrawer
         visible={visible}
         onClose={onClose}

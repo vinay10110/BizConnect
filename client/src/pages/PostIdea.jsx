@@ -86,7 +86,7 @@ const PostIdea = () => {
                 name="reg"
                 rules={[{ required: true, message: 'Please enter the company register number' }]}
               >
-                <Input type="number" placeholder="Enter company register no" value={companyReg} onChange={ev => setReg(ev.target.value)} />
+                <Input  placeholder="Enter company register no" value={companyReg} onChange={ev => setReg(ev.target.value)} />
               </Form.Item>
 
               <Form.Item
