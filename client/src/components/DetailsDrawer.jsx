@@ -24,7 +24,7 @@ const DetailsDrawer = ({ visible, onClose, itemType, item }) => {
         <>
           <p>Min Age: {item.minAge} years</p>
           <p>Max Age: {item.maxAge} years</p>
-          <p>Net Income: {item.netIncome} .Rs</p>
+          <p>Amount: {item.amount} .Rs</p>
           <p>Interest Rate: {item.intrestRate}.Rs</p>
           <p>Duration: {item.duration} years</p>
         </>
