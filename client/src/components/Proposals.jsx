@@ -52,6 +52,9 @@ const Proposals = () => {
 
     fetchDataAndFilter();
   }, [userInfo]);
+  const handleClick=(mailId)=>{
+    window.location.href=`mailto:${mailId}`
+  }
   const showDrawer = (type, data) => {
     setItemType(type);
     setItem(data);
@@ -196,7 +199,7 @@ const Proposals = () => {
                         <div>
                           <Avatar size={32} src={proposal.user.imageData} style={{ marginRight: '5px' }} />{proposal.user.name}
                         </div>
-                        <Button type="primary" >Contact</Button>
+                        <Button type="primary" onClick={()=>handleClick(proposal.user.email)} >Contact</Button>
                       </div>
                     </>
                   )}

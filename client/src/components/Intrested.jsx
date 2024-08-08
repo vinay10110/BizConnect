@@ -18,14 +18,15 @@ const Intrested = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
-      
     }
     setLoading(false);
   };
   useEffect(() => {
     fetchData();
   }, [userInfo]);
-
+  const handleClick=(mailId)=>{
+    window.location.href=`mailto:${mailId}`
+  }
   if (loading) {
     return <Spin size="large" style={{ display: 'block', margin: 'auto' }} />;
   }
@@ -55,7 +56,7 @@ const Intrested = () => {
                 <p>Duration of: {intrest.loan.duration} years</p>
                 <Divider orientation="left"></Divider>
                 <div style={{display:'flex',justifyContent:'flex-end'}}>
-                  <Button type='primary' >Contact</Button>
+                  <Button type='primary' onClick={()=>handleClick(intrest.user.email)} >Contact</Button>
                 </div>
               </Card>
             </Col>

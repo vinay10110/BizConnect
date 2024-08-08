@@ -31,9 +31,8 @@ const Ideas = () => {
   const [filterVisible, setFilterVisible] = useState(false);
   const { userInfo } = useContext(UserContext);
 
-  const handleClick = () => {
-    const mailto = `mailto:${userInfo.email}`;
-    window.open(mailto, '_blank');
+  const handleClick = (mailId)=> {
+    window.location.href(`mailto:${mailId}`)
   };
 
   const fetchIdeas = async () => {
@@ -202,7 +201,7 @@ const Ideas = () => {
                           {idea.user.name}
                         </div>
                         <div>
-                          <Button type="primary" onClick={handleClick}>Contact</Button>
+                          <Button type="primary" onClick={()=>handleClick(idea.user.email)}>Contact</Button>
                         </div>
                       </div>
                     </>

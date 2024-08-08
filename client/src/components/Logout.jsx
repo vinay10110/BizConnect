@@ -21,7 +21,6 @@ const Logout=()=>{
     <>
     <Button onClick={showModal}danger ghost>Logout</Button>
     <Modal title="Are you sure you want to logout?" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Logout" okType='danger'>
-
     </Modal>
     </>
     
