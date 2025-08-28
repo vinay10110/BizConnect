@@ -11,6 +11,7 @@ const queryRouter=require('./routes/queries');
 const proposalRouter=require('./routes/proposals');
 const loanRouter=require('./routes/loans');
 const ideaRouter=require('./routes/ideas');
+
 app.use(cors({
     origin: `${process.env.HOST_ADDRESS}`,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],

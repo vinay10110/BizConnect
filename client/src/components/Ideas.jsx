@@ -7,6 +7,8 @@ import IdeasEdit from "../pages/IdeasEdit";
 import DetailsDrawer from './DetailsDrawer';
 import { UserContext } from "./UserContext";
 import Filter from './Filter';
+import ContactDialog from './ContactDialog';
+import { handleTokenExpiration } from '../utils/tokenUtils';
 const { Text } = Typography;
 
 const truncateDescription = (text, maxLength) => {
@@ -29,24 +31,48 @@ const Ideas = () => {
   const [filterTrue, setFilterTrue] = useState(false);
   const [filterValue, setFilterValue] = useState(null);
   const [filterVisible, setFilterVisible] = useState(false);
+  const [contactVisible, setContactVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
   const { userInfo } = useContext(UserContext);
 
-  const handleClick = (mailId)=> {
-    window.location.href(`mailto:${mailId}`)
+  const handleContactClick = (user) => {
+    setSelectedContact(user);
+    setContactVisible(true);
+  };
+
+  const handleContactClose = () => {
+    setContactVisible(false);
+    setSelectedContact(null);
   };
 
   const fetchIdeas = async () => {
     setLoading(true);
-    const ideasResponse = await fetch(`${import.meta.env.VITE_API_URL}/idea`);
-    const ideasResult = await ideasResponse.json();
-    if (userInfo.type === 'BusinessMan') {
-      setUserTrue(true);
-      const filteredIdeas = ideasResult.filter(idea => idea.user.email === userInfo.email);
-      setIdeas(filteredIdeas);
-    } else {
-      setIdeas(ideasResult);
+    try {
+      const ideasResponse = await fetch(`${import.meta.env.VITE_API_URL}/idea`);
+      
+      if (!ideasResponse.ok) {
+        const errorData = await ideasResponse.json();
+        if (handleTokenExpiration(ideasResponse, errorData)) {
+          return;
+        }
+        throw new Error(errorData.message || 'Failed to fetch ideas');
+      }
+      
+      const ideasResult = await ideasResponse.json();
+      if (userInfo.type === 'BusinessMan') {
+        setUserTrue(true);
+        const filteredIdeas = ideasResult.filter(idea => idea.user.email === userInfo.email);
+        setIdeas(filteredIdeas);
+      } else {
+        setIdeas(ideasResult);
+      }
+    } catch (error) {
+      if (error.message !== 'TOKEN_EXPIRED') {
+        message.error('Failed to load ideas');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -55,19 +81,30 @@ const Ideas = () => {
   }, [userInfo, token]);
 
   const handleDelete = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
-      method: 'DELETE',
-      body: JSON.stringify({ id }),
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': `${token}`
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': `${token}`
+        }
+      });
+      
+      if (response.status === 200) {
+        message.success('Idea deleted successfully');
+        fetchIdeas();
+      } else {
+        const errorData = await response.json();
+        if (handleTokenExpiration(response, errorData)) {
+          return;
+        }
+        message.error('Failed to delete the idea');
       }
-    });
-    if (response.status === 200) {
-      message.success('Idea deleted successfully');
-      fetchIdeas();
-    } else {
-      message.error('Failed to delete the idea');
+    } catch (error) {
+      if (error.message !== 'TOKEN_EXPIRED') {
+        message.error('Failed to delete the idea');
+      }
     }
   };
 
@@ -77,19 +114,30 @@ const Ideas = () => {
 
   const handleUpdate = async (updatedIdea) => {
     const { id, values } = updatedIdea;
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
-      method: 'PUT',
-      body: JSON.stringify({ id, values }),
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': `${token}`
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/idea`, {
+        method: 'PUT',
+        body: JSON.stringify({ id, values }),
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': `${token}`
+        }
+      });
+      
+      if (response.ok) {
+        message.success('Updated successfully');
+        fetchIdeas();
+      } else {
+        const errorData = await response.json();
+        if (handleTokenExpiration(response, errorData)) {
+          return;
+        }
+        message.error('Failed to update idea');
       }
-    });
-    if (response.ok) {
-      message.success('Updated successfully');
-      fetchIdeas();
-    } else {
-      message.error('Failed to update idea');
+    } catch (error) {
+      if (error.message !== 'TOKEN_EXPIRED') {
+        message.error('Failed to update idea');
+      }
     }
   };
 
@@ -201,7 +249,7 @@ const Ideas = () => {
                           {idea.user.name}
                         </div>
                         <div>
-                          <Button type="primary" onClick={()=>handleClick(idea.user.email)}>Contact</Button>
+                          <Button type="primary" onClick={()=>handleContactClick(idea.user)}>Contact</Button>
                         </div>
                       </div>
                     </>
@@ -240,6 +288,15 @@ const Ideas = () => {
           itemType={itemType}
           item={item}
         />
+        
+        {selectedContact && (
+          <ContactDialog
+            visible={contactVisible}
+            onClose={handleContactClose}
+            recipientEmail={selectedContact.email}
+            recipientName={selectedContact.name}
+          />
+        )}
         
       </Spin>
     </>
